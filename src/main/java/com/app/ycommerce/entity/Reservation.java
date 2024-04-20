@@ -21,8 +21,8 @@ public class Reservation {
     private boolean status;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @OneToMany(mappedBy = "reservation")
     private List<Product> products = new ArrayList<>();
