@@ -3,7 +3,6 @@ package com.app.ycommerce.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +18,6 @@ import com.app.ycommerce.service.MemberService;
 
 import lombok.extern.slf4j.Slf4j;
 
-@SuppressWarnings("checkstyle:AbbreviationAsWordInName")
 @Slf4j
 @RestController
 @ResponseBody
@@ -28,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberController {
 	private final MemberService memberService;
 
-	public MemberController(MemberService memberService, JavaMailSender mailSender) {
+	public MemberController(MemberService memberService) {
 		this.memberService = memberService;
 	}
 
@@ -41,7 +39,6 @@ public class MemberController {
 	// 		.contentType(MediaType.APPLICATION_JSON)
 	// 		.body(member);
 	// }
-
 	@PostMapping("/signup") //회원가입
 	public ResponseEntity<MemberSignUpResponseDTO> singUp(@RequestBody MemberSignUpDTO memberSignUpDTO) {
 		Member member = memberService.signUp(memberSignUpDTO);

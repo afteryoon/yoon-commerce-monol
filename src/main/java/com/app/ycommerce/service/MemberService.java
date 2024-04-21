@@ -6,6 +6,8 @@ import java.util.Random;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -44,8 +46,8 @@ public class MemberService implements UserDetailsService {
 
 		checkDuplication(email);
 
-		if ((redisRepository.verifyVerificationCode
-			(memberSignUpDTO.getEmail(), memberSignUpDTO.getVerificationCode()))) {
+		if ((redisRepository.verifyVerificationCode(memberSignUpDTO.getEmail(),
+			memberSignUpDTO.getVerificationCode()))) {
 
 			Member member = Member.builder()
 				.email(memberSignUpDTO.getEmail())
@@ -112,6 +114,11 @@ public class MemberService implements UserDetailsService {
 
 	}
 
+	public Member getMember(String email) {
+		Member member = memberRepository.findByEmail(email);
+		return member;
+	}
+
 	// //로그인
 	// public Member login(MemberRequest memberRequest) {
 	// 	Member member = memberRepository.findByEmail(memberRequest.getEmail());
@@ -126,17 +133,32 @@ public class MemberService implements UserDetailsService {
 	//
 	// 	return member;
 	// }
-
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
 		Member member = memberRepository.findByEmail(email);
-
 		if (member != null) {
-
 			return new CustomUserDetails(member);
 		}
-
 		throw new IllegalArgumentException("회원 정보가 없습니다.");
 	}
+
+	public UserDetails getCurrentUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+			return (UserDetails)authentication.getPrincipal();
+		}
+		return null;
+	}
+
+	//로그인한 맴버
+	public Member getCurrentMember() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+			UserDetails userDetails = (UserDetails)authentication.getPrincipal();
+
+			return memberRepository.findByEmail(userDetails.getUsername());
+		}
+		throw new IllegalStateException("인증된 사용자 정보가 없습니다.");
+	}
+
 }

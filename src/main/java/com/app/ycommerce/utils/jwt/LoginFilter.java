@@ -1,4 +1,4 @@
-package com.app.ycommerce.utiles.jwt;
+package com.app.ycommerce.utils.jwt;
 
 import java.io.IOException;
 import java.util.Collection;
