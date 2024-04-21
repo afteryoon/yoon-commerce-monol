@@ -22,6 +22,7 @@ import lombok.NoArgsConstructor;
 @Builder
 
 public class Member {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "member_id")
@@ -43,5 +44,8 @@ public class Member {
 
 	@OneToMany(mappedBy = "member")
 	private List<Reservation> reservations = new ArrayList<>();
+
+	@OneToMany(mappedBy = "member")
+	private List<LikeItem> LikeItems = new ArrayList<>();
 
 }
