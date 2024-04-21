@@ -13,9 +13,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.app.ycommerce.utiles.jwt.JWTFilter;
-import com.app.ycommerce.utiles.jwt.JWTUtil;
-import com.app.ycommerce.utiles.jwt.LoginFilter;
+import com.app.ycommerce.utils.jwt.JWTFilter;
+import com.app.ycommerce.utils.jwt.JWTUtil;
+import com.app.ycommerce.utils.jwt.LoginFilter;
 
 import lombok.extern.slf4j.Slf4j;
 
