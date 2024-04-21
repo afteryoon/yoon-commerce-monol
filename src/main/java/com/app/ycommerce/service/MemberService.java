@@ -6,10 +6,14 @@ import java.util.Random;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.app.ycommerce.dto.CustomUserDetails;
 import com.app.ycommerce.dto.MemberSignUpDTO;
 import com.app.ycommerce.dto.VerificationEmailDto;
 import com.app.ycommerce.entity.Member;
@@ -18,7 +22,7 @@ import com.app.ycommerce.repository.RedisRepository;
 
 @Service
 @Transactional
-public class MemberService {
+public class MemberService implements UserDetailsService {
 
 	private final MemberRepository memberRepository;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -32,7 +36,6 @@ public class MemberService {
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 		this.mailSender = emailSender;
 		this.redisRepository = redisRepository;
-
 	}
 
 	//회원 로그인 -이메일 중복 확인 후 저장
@@ -60,7 +63,7 @@ public class MemberService {
 		//        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		//        Member member = modelMapper.map(memberSignUpDTO, Member.class);
 
-		throw new RuntimeException("잘못된 인증 코드입니다.");
+		throw new IllegalArgumentException("잘못된 인증 코드입니다.");
 	}
 
 	//회원 코드 전송
@@ -101,6 +104,7 @@ public class MemberService {
 		return verificationEmailDto;
 	}
 
+	//이메일 중복검사
 	public void checkDuplication(String email) {
 
 		if (memberRepository.existsByEmail(email))
@@ -108,4 +112,31 @@ public class MemberService {
 
 	}
 
+	// //로그인
+	// public Member login(MemberRequest memberRequest) {
+	// 	Member member = memberRepository.findByEmail(memberRequest.getEmail());
+	//
+	// 	if (member == null) {
+	// 		throw new IllegalArgumentException("존재하지 않는 회원입니다.");
+	// 	}
+	//
+	// 	if (!bCryptPasswordEncoder.matches(memberRequest.getPassword(), member.getPassword())) {
+	// 		throw new IllegalArgumentException("회원 정보가 일치하지 않습니다.");
+	// 	}
+	//
+	// 	return member;
+	// }
+
+	@Override
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+		Member member = memberRepository.findByEmail(email);
+
+		if (member != null) {
+
+			return new CustomUserDetails(member);
+		}
+
+		throw new IllegalArgumentException("회원 정보가 없습니다.");
+	}
 }

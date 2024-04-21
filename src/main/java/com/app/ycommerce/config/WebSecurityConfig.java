@@ -3,12 +3,19 @@ package com.app.ycommerce.config;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.app.ycommerce.utiles.jwt.JWTFilter;
+import com.app.ycommerce.utiles.jwt.JWTUtil;
+import com.app.ycommerce.utiles.jwt.LoginFilter;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,10 +24,25 @@ import lombok.extern.slf4j.Slf4j;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
+	private final AuthenticationConfiguration authenticationConfiguration;
+	private final JWTUtil jwtUtil;
+
+	public WebSecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil) {
+
+		this.authenticationConfiguration = authenticationConfiguration;
+		this.jwtUtil = jwtUtil;
+	}
+
 	@Bean  //정적 자원(Resource)에 대해서 인증된 사용자가  정적 자원의 접근에 대해 ‘인가’에 대한 설정을 담당하는 메서드
 	public WebSecurityCustomizer webSecurityCustomizer() {
 		// 정적 자원에 대해서 Security를 적용하지 않음으로 설정
 		return web -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+	}
+
+	@Bean //LoginFilter 에 넣어줄 객체 생성
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+
+		return configuration.getAuthenticationManager();
 	}
 
 	@Bean
@@ -55,6 +77,13 @@ public class WebSecurityConfig {
 		http
 			.sessionManagement((session) -> session
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+		//filter 동록
+		http
+			.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil),
+				UsernamePasswordAuthenticationFilter.class);
+
+		http
+			.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 
 		return http.build();
 	}

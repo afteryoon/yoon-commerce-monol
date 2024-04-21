@@ -26,14 +26,21 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/member")
 
 public class MemberController {
-
 	private final MemberService memberService;
 
 	public MemberController(MemberService memberService, JavaMailSender mailSender) {
-
 		this.memberService = memberService;
-
 	}
+
+	// @PostMapping("/login") //로그인
+	// public ResponseEntity<Member> findByEmail(@RequestBody MemberRequest memberRequest) {
+	//
+	// 	Member member = memberService.login(memberRequest);
+	//
+	// 	return ResponseEntity.status(HttpStatus.CREATED)
+	// 		.contentType(MediaType.APPLICATION_JSON)
+	// 		.body(member);
+	// }
 
 	@PostMapping("/signup") //회원가입
 	public ResponseEntity<MemberSignUpResponseDTO> singUp(@RequestBody MemberSignUpDTO memberSignUpDTO) {
