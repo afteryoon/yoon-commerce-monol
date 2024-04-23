@@ -1,30 +1,36 @@
 package com.app.ycommerce.entity;
 
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
-@Getter@Setter
+@Getter
+@Setter
 public class Reservation {
 
-    @Id@GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "reservation_id")
-    private int id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "reservation_id")
+	private Long id;
 
-    private LocalDateTime orderDate;
-    private int quantity;
-    private boolean status;
+	private LocalDateTime orderDate;
+	private int quantity;
+	private boolean status;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
+	@JoinColumn(name = "member_id")
+	private Long memberId;
 
-    @OneToMany(mappedBy = "reservation")
-    private List<Product> products = new ArrayList<>();
+	@ManyToOne
+	@JoinColumn(name = "product_id")
+	private Product product;
 
 }

@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.app.ycommerce.entity.Product;
 
-public interface ProductRepository extends JpaRepository<Product, Integer> {
+public interface ProductRepository extends JpaRepository<Product, Long> {
 	List<Product> findAllByOrderByIdDesc();
 
-	Optional<Product> findById(int id);
+	Optional<Product> findById(Long id);
 
 }

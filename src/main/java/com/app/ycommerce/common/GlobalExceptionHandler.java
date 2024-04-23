@@ -16,10 +16,10 @@ public class GlobalExceptionHandler {
 			.body(new ErrorResponse(ex.getMessage()));
 	}
 
-	@ExceptionHandler(RuntimeException.class)
-	public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-			.body(new ErrorResponse(ex.getMessage()));
-	}
+	// @ExceptionHandler(RuntimeException.class)
+	// public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
+	// 	return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+	// 		.body(new ErrorResponse(ex.getMessage()));
+	// }
 
 }

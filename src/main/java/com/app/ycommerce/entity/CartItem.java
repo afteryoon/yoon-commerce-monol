@@ -14,25 +14,25 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Builder
 @Getter
 @Setter
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
-public class OrderItem {
+@AllArgsConstructor
+public class CartItem {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "order_item_id")
+	@Column(name = "cart_item_id")
 	private Long id;
 
-	private int quantity;
-
-	@JoinColumn(name = "order_id")
-	private Long orderId;
+	@JoinColumn(name = "cart_id")
+	private Long cartId;
 
 	@OneToOne
 	@JoinColumn(name = "product_id")
 	private Product product;
+
+	private int quantity;
 
 }

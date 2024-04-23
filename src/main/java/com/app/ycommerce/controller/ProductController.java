@@ -35,9 +35,16 @@ public class ProductController {
 		return ResponseEntity.ok().body(products);
 	}
 
+	@GetMapping("/productDetail/{productId}")
+	public ResponseEntity<ProductDto> findAllByOrderByIdDesc(@PathVariable Long productId) {
+		ProductDto product = productService.findById(productId);
+
+		return ResponseEntity.ok().body(product);
+	}
+
 	//상품 좋아요
 	@PostMapping("/like-product/{productId}")
-	public ResponseEntity<?> likeProduct(@PathVariable int productId) {
+	public ResponseEntity<?> likeProduct(@PathVariable Long productId) {
 		productService.likeProduct(productId);
 		return ResponseEntity.ok().build();
 	}
@@ -45,8 +52,8 @@ public class ProductController {
 	//좋아요한 상품 목록
 	@GetMapping("/like-productList")
 	public ResponseEntity<List<LikeItem>> getLikedProducts() {
-		List<LikeItem> likedProducts = productService.getLikedProducts();
-		return ResponseEntity.ok(likedProducts);
+		List<LikeItem> product = productService.getLikedProducts();
+		return ResponseEntity.ok(product);
 	}
 
 }
