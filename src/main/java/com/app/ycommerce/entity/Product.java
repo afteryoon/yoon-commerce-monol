@@ -12,7 +12,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,9 +29,9 @@ public class Product {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "product_id")
-	private int id;
+	private Long id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "category_id")
 	private Category category;
 
@@ -41,24 +40,13 @@ public class Product {
 	private int price;
 	private int inventory;
 
-	@OneToOne
-	@JoinColumn(name = "order_item_id")
-	private OrderItem orderItem;
-
-	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-	private List<LikeItem> likeItems = new ArrayList<>();
-
-	@ManyToOne
-	@JoinColumn(name = "reservation_id")
-	private Reservation reservation;
+	@OneToMany(fetch = FetchType.LAZY)
+	//@JsonIgnore
+	private List<Reservation> reservations = new ArrayList<>();
 
 	// @ManyToOne
 	// @JoinColumn(name = "wish_list_id")
 	// private WishList wishList;
-
-	@OneToOne
-	@JoinColumn(name = "cart_id")
-	private CartItem cartItem;
 
 	public void decreaseInventory(int quantity) {
 		if (this.inventory < quantity) {

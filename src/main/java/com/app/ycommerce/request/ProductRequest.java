@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ProductRequest {
-	private int productId;
-	private int categoryId;
+	private Long productId;
+	private Long categoryId;
 	private String productName;
 	private String productDescription;
 	private int price;
 	private int inventory;
 
-	public ProductRequest(int productId, int categoryId, String productName, String productDescription, int price,
+	public ProductRequest(Long productId, Long categoryId, String productName, String productDescription, int price,
 		int inventory) {
 		this.productId = productId;
 		this.categoryId = categoryId;

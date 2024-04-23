@@ -29,19 +29,19 @@ public class ProductService {
 	}
 
 	//상품 좋아요
-	public void likeProduct(int productId) {
+	public void likeProduct(Long productId) {
 
 		Product product = productRepository.findById(productId)
 			.orElseThrow(() -> new IllegalArgumentException("준비되지 않은 상품입니다."));
 		Member member = memberService.getCurrentMember();
 
-		LikeItem existingLike = likeItemRepository.findByMemberAndProduct(member, product)
+		LikeItem existingLike = likeItemRepository.findByMemberIdAndProduct(member.getId(), product)
 			.orElse(null);
 
 		if (existingLike == null) {
 			LikeItem likeItem = LikeItem.builder()
 				.product(product)
-				.member(member)
+				.memberId(member.getId())
 				.build();
 
 			likeItemRepository.save(likeItem);
@@ -53,7 +53,7 @@ public class ProductService {
 	//유저가 좋아요한 목록
 	public List<LikeItem> getLikedProducts() {
 		Member member = memberService.getCurrentMember();
-		return likeItemRepository.findByMember(member);
+		return likeItemRepository.findByMemberId(member.getId());
 	}
 
 	//최근 상품순
@@ -77,14 +77,14 @@ public class ProductService {
 	}
 
 	//단품 조회
-	public ProductDto findById(int productId) {
+	public ProductDto findById(Long productId) {
 		Product product = productRepository.findById(productId)
 			.orElseThrow(() -> new IllegalArgumentException("준비되지 않은 상품입니다."));
 
 		return mapToProductDto(product);
 	}
 
-	public Product getProduct(int productId) {
+	public Product getProduct(Long productId) {
 		Product product = productRepository.findById(productId)
 			.orElseThrow(() -> new IllegalArgumentException("준비되지 않은 상품입니다."));
 

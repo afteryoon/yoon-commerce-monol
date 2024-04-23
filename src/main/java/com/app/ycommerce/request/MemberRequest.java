@@ -1,5 +1,6 @@
 package com.app.ycommerce.request;
 
+import com.app.ycommerce.entity.Address;
 import com.app.ycommerce.entity.Member;
 
 import lombok.Getter;
@@ -13,9 +14,9 @@ public class MemberRequest {
 	private String password;
 	private String email;
 	private String phone;
-	private String address;
+	private Address address;
 
-	public Member toUserEntity(String password, String username, String email, String address, String phoneNumber,
+	public Member toUserEntity(String password, String username, String email, Address address, String phoneNumber,
 		String roles) {
 		return Member.builder()
 			.name(username)
@@ -27,7 +28,7 @@ public class MemberRequest {
 			.build();
 	}
 
-	public MemberRequest(String username, String password, String email, String address, String phoneNumber) {
+	public MemberRequest(String username, String password, String email, Address address, String phoneNumber) {
 		this.name = username;
 		this.password = password;
 		this.email = email;

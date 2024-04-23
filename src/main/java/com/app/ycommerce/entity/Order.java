@@ -12,7 +12,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -33,7 +32,7 @@ public class Order {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "order_id")
-	private int id;
+	private Long id;
 
 	@Enumerated(EnumType.STRING)
 	private OrderStatus orderStatus;//주문상태 배치,배송중,배송완료,구매,환불
@@ -42,11 +41,10 @@ public class Order {
 	private int amount;
 	private int delivery_address;
 
-	@ManyToOne
 	@JoinColumn(name = "member_id")
-	private Member member;
+	private Long memberId;
 
-	@OneToMany(mappedBy = "order")
+	@OneToMany
 	private List<OrderItem> orderItems = new ArrayList<>();
 
 }

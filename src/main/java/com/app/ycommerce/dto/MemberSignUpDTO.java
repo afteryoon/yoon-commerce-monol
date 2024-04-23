@@ -1,5 +1,7 @@
 package com.app.ycommerce.dto;
 
+import com.app.ycommerce.entity.Address;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,12 +13,12 @@ import lombok.NoArgsConstructor;
 @Builder
 public class MemberSignUpDTO {
 
-	private int id;
+	private Long id;
 	private String name;
 	private String password;
 	private String email;
 	private String phone;
-	private String address;
+	private Address address;
 	private String verificationCode;
 
 }

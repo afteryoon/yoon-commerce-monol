@@ -10,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,13 +25,12 @@ public class Cart {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "cart_id")
-	private int id;
+	private Long id;
 
-	@OneToMany(mappedBy = "cart")
+	@OneToMany
 	private List<CartItem> cartItems = new ArrayList<>();
 
-	@OneToOne
 	@JoinColumn(name = "member_id")
-	private Member member;
+	private Long memberId;
 
 }

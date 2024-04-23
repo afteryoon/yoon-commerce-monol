@@ -36,7 +36,7 @@ public class ProductController {
 	}
 
 	@GetMapping("/productDetail/{productId}")
-	public ResponseEntity<ProductDto> findAllByOrderByIdDesc(@PathVariable int productId) {
+	public ResponseEntity<ProductDto> findAllByOrderByIdDesc(@PathVariable Long productId) {
 		ProductDto product = productService.findById(productId);
 
 		return ResponseEntity.ok().body(product);
@@ -44,7 +44,7 @@ public class ProductController {
 
 	//상품 좋아요
 	@PostMapping("/like-product/{productId}")
-	public ResponseEntity<?> likeProduct(@PathVariable int productId) {
+	public ResponseEntity<?> likeProduct(@PathVariable Long productId) {
 		productService.likeProduct(productId);
 		return ResponseEntity.ok().build();
 	}

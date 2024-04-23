@@ -41,7 +41,7 @@ public class OrderService {
 	public Order createOrder(List<OrderItemRequest> orderItemRequests) {
 		Member currentMember = memberService.getCurrentMember();
 		Order order = Order.builder()
-			.member(currentMember)
+			.memberId(currentMember.getId())
 			.orderStatus(OrderStatus.PLACED)
 			.build();
 
@@ -53,7 +53,7 @@ public class OrderService {
 			product.decreaseInventory(orderItemRequest.getQuantity());
 
 			OrderItem orderItem = OrderItem.builder()
-				.order(order)
+				.orderId(order.getId())
 				.product(product)
 				.quantity(orderItemRequest.getQuantity())
 				.build();
@@ -79,23 +79,23 @@ public class OrderService {
 	public void addToCart(OrderItemRequest orderItemRequest) {
 		Member member = memberService.getCurrentMember();
 		Cart cart;
-
+		//회원의 장바구니가 비었다면 장바구니 생성 아니라면 갖고 오기
 		if (member.getCart() == null) {
 			cart = Cart.builder()
-				.member(member)
+				.memberId(member.getId())
 				.build();
 			member.setCart(cartRepository.save(cart));
 		} else {
 			cart = member.getCart();
 		}
 		Product product = orderItemRequest.getProduct();
-
-		CartItem cartItem = cartItemRepository.findByCartAndProduct(cart, product)
+		//카트에 담긴 상품 조회
+		CartItem cartItem = cartItemRepository.findByCartIdAndProduct(cart.getId(), product)
 			.orElse(null);
-
+		//없다면 추가해주고, 있을땐 수량만큼 추가
 		if (cartItem == null) {
 			cartItem = CartItem.builder()
-				.cart(cart)
+				.cartId(cart.getId())
 				.product(product)
 				.quantity(orderItemRequest.getQuantity())
 				.build();

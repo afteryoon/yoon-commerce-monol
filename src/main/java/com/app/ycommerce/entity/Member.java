@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -27,32 +28,33 @@ import lombok.Setter;
 @Builder
 
 public class Member {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "member_id")
-	private int id;
+	private Long id;
 	private String name;
 	private String password;
 	private String email;
 	private String phone;
-	//    @Embedded
-	private String address;
+	@Embedded
+	private Address address;
 	private LocalDate createdAt;
 	private String role;
 
-	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+	@OneToMany(fetch = FetchType.LAZY)
 	private List<Order> orders = new ArrayList<>();
 
 	// @OneToMany(mappedBy = "member")
 	// private List<WishList> wishLists = new ArrayList<>();
 
-	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+	@OneToMany(fetch = FetchType.LAZY)
 	private List<Reservation> reservations = new ArrayList<>();
 
-	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+	@OneToMany(fetch = FetchType.LAZY)
 	private List<LikeItem> LikeItems = new ArrayList<>();
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cart_id")
 	private Cart cart;
 }

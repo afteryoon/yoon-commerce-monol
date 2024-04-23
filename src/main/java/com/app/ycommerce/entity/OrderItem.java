@@ -6,7 +6,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,13 +24,12 @@ public class OrderItem {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "order_item_id")
-	private int id;
+	private Long id;
 
 	private int quantity;
 
-	@ManyToOne
 	@JoinColumn(name = "order_id")
-	private Order order;
+	private Long orderId;
 
 	@OneToOne
 	@JoinColumn(name = "product_id")
