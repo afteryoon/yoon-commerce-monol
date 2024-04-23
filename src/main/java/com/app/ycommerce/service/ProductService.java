@@ -76,10 +76,19 @@ public class ProductService {
 			.build();
 	}
 
+	//단품 조회
 	public ProductDto findById(int productId) {
 		Product product = productRepository.findById(productId)
 			.orElseThrow(() -> new IllegalArgumentException("준비되지 않은 상품입니다."));
 
 		return mapToProductDto(product);
 	}
+
+	public Product getProduct(int productId) {
+		Product product = productRepository.findById(productId)
+			.orElseThrow(() -> new IllegalArgumentException("준비되지 않은 상품입니다."));
+
+		return product;
+	}
+
 }

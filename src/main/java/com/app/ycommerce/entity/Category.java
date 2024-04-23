@@ -1,23 +1,30 @@
 package com.app.ycommerce.entity;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 public class Category {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "category_id")
-    private int id;
-    private String categoryTitle;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "category_id")
+	private int id;
+	private String categoryTitle;
 
-    @OneToMany(mappedBy = "category")
-    private List<Product> products= new ArrayList<>();
-
-
+	@OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+	private List<Product> products = new ArrayList<>();
+	//
 }
