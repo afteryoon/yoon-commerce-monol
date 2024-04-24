@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +31,8 @@ public class LikeItem {
 	@JoinColumn(name = "product_id")
 	private Product product;
 
+	@ManyToOne
 	@JoinColumn(name = "member_id")
-	private Long memberId;
+	private Member member;
 
 }

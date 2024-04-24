@@ -26,11 +26,12 @@ public class Reservation {
 	private int quantity;
 	private boolean status;
 
-	@JoinColumn(name = "member_id")
-	private Long memberId;
-
 	@ManyToOne
 	@JoinColumn(name = "product_id")
 	private Product product;
+
+	@ManyToOne
+	@JoinColumn(name = "member_id")
+	private Reservation reservation;
 
 }

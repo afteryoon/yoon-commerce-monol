@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,11 +29,20 @@ public class OrderItem {
 
 	private int quantity;
 
+	@ManyToOne
 	@JoinColumn(name = "order_id")
-	private Long orderId;
+	private Order order;
 
 	@OneToOne
 	@JoinColumn(name = "product_id")
 	private Product product;
+
+	public static OrderItem createOrderItem(Order order, Product product, int quantity) {
+		return OrderItem.builder()
+			.order(order)
+			.product(product)
+			.quantity(quantity)
+			.build();
+	}
 
 }

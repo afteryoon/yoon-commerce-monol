@@ -12,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -39,12 +40,33 @@ public class Order {
 
 	private LocalDateTime orderDate;
 	private int amount;
-	private int delivery_address;
-
-	@JoinColumn(name = "member_id")
-	private Long memberId;
+	private Address deliveryAddress;
 
 	@OneToMany
 	private List<OrderItem> orderItems = new ArrayList<>();
 
+	@ManyToOne
+	@JoinColumn(name = "member_id")
+	private Member member;
+
+	public static Order createOrder(Member member, Address deliveryAddress) {
+		return Order.builder()
+			.member(member)
+			.orderStatus(OrderStatus.PLACED)
+			.orderDate(LocalDateTime.now())
+			.deliveryAddress(deliveryAddress)
+			.build();
+	}
+
+	public void addOrderItems(List<OrderItem> orderItems) {
+		int amount = 0;
+		for (OrderItem orderItem : orderItems) {
+			orderItem.setOrder(this);
+			this.orderItems.add(orderItem);
+			amount += orderItem.getProduct().getPrice();
+		}
+		this.amount = amount;
+	}
+
 }
+

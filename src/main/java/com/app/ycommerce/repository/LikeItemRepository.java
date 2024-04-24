@@ -6,10 +6,11 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.app.ycommerce.entity.LikeItem;
+import com.app.ycommerce.entity.Member;
 import com.app.ycommerce.entity.Product;
 
 public interface LikeItemRepository extends JpaRepository<LikeItem, Long> {
-	Optional<LikeItem> findByMemberIdAndProduct(Long member, Product product);
+	Optional<LikeItem> findByMemberAndProduct(Member member, Product product);
 
-	List<LikeItem> findByMemberId(Long member);
+	List<LikeItem> findByMember(Member member);
 }

@@ -1,164 +1,1 @@
-package com.app.ycommerce.service;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Random;
-
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.app.ycommerce.dto.CustomUserDetails;
-import com.app.ycommerce.dto.MemberSignUpDTO;
-import com.app.ycommerce.dto.VerificationEmailDto;
-import com.app.ycommerce.entity.Member;
-import com.app.ycommerce.repository.MemberRepository;
-import com.app.ycommerce.repository.RedisRepository;
-
-@Service
-@Transactional
-public class MemberService implements UserDetailsService {
-
-	private final MemberRepository memberRepository;
-	private final BCryptPasswordEncoder bCryptPasswordEncoder;
-	private final JavaMailSender mailSender;
-	private final RedisRepository redisRepository;
-
-	public MemberService(MemberRepository memberRepository, BCryptPasswordEncoder bCryptPasswordEncoder,
-		JavaMailSender emailSender, RedisRepository redisRepository) {
-
-		this.memberRepository = memberRepository;
-		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-		this.mailSender = emailSender;
-		this.redisRepository = redisRepository;
-	}
-
-	//회원 로그인 -이메일 중복 확인 후 저장
-	public Member signUp(MemberSignUpDTO memberSignUpDTO) {
-		String email = memberSignUpDTO.getEmail();
-
-		checkDuplication(email);
-
-		if ((redisRepository.verifyVerificationCode(memberSignUpDTO.getEmail(),
-			memberSignUpDTO.getVerificationCode()))) {
-
-			Member member = Member.builder()
-				.email(memberSignUpDTO.getEmail())
-				.password(bCryptPasswordEncoder.encode(memberSignUpDTO.getPassword()))
-				.name(memberSignUpDTO.getName())
-				.phone(memberSignUpDTO.getPhone())
-				.address(memberSignUpDTO.getAddress())
-				.role("ROLE_MEMBER")
-				.createdAt(LocalDate.from(LocalDateTime.now()))
-				.build();
-
-			return memberRepository.save(member);
-		}
-		//        ModelMapper modelMapper = new ModelMapper();
-		//        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-		//        Member member = modelMapper.map(memberSignUpDTO, Member.class);
-
-		throw new IllegalArgumentException("잘못된 인증 코드입니다.");
-	}
-
-	//회원 코드 전송
-	public void sendVerificationEmail(String email, String verificationCode) {
-
-		SimpleMailMessage mailMessage = new SimpleMailMessage();
-		mailMessage.setFrom("khsso102649@gmail.com");
-		mailMessage.setTo(email);
-		mailMessage.setSubject("회원가입 인증 코드");
-		mailMessage.setText(verificationCode);
-
-		mailSender.send(mailMessage);
-		redisRepository.saveVerificationCode(email, verificationCode);
-	}
-
-	//인증코드 랜덤 6자리 생성
-	public String generateVerificationCode() {
-		int min = 100000;
-		int max = 999999;
-		Random random = new Random();
-		int randomNumber = random.nextInt(max - min + 1) + min;
-
-		return String.valueOf(randomNumber);
-	}
-
-	//email 인증코드 저장 및 중복체크
-	public VerificationEmailDto verificationEmail(String email) {
-
-		checkDuplication(email);
-
-		String verificationCode = generateVerificationCode();
-		sendVerificationEmail(email, verificationCode);
-
-		VerificationEmailDto verificationEmailDto = VerificationEmailDto.builder()
-			.verificationCode(verificationCode)
-			.build();
-
-		return verificationEmailDto;
-	}
-
-	//이메일 중복검사
-	public void checkDuplication(String email) {
-
-		if (memberRepository.existsByEmail(email))
-			throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
-
-	}
-
-	public Member getMember(String email) {
-		Member member = memberRepository.findByEmail(email);
-		return member;
-	}
-
-	// //로그인
-	// public Member login(MemberRequest memberRequest) {
-	// 	Member member = memberRepository.findByEmail(memberRequest.getEmail());
-	//
-	// 	if (member == null) {
-	// 		throw new IllegalArgumentException("존재하지 않는 회원입니다.");
-	// 	}
-	//
-	// 	if (!bCryptPasswordEncoder.matches(memberRequest.getPassword(), member.getPassword())) {
-	// 		throw new IllegalArgumentException("회원 정보가 일치하지 않습니다.");
-	// 	}
-	//
-	// 	return member;
-	// }
-	@Override
-	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		Member member = memberRepository.findByEmail(email);
-		if (member != null) {
-			return new CustomUserDetails(member);
-		}
-		throw new IllegalArgumentException("회원 정보가 없습니다.");
-	}
-
-	public UserDetails getCurrentUser() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-			return (UserDetails)authentication.getPrincipal();
-		}
-		return null;
-	}
-
-	//로그인한 맴버
-	public Member getCurrentMember() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-			UserDetails userDetails = (UserDetails)authentication.getPrincipal();
-
-			return memberRepository.findByEmail(userDetails.getUsername());
-		}
-		throw new IllegalStateException("인증된 사용자 정보가 없습니다.");
-	}
-
-}
+package com.app.ycommerce.service;import java.time.LocalDate;import java.time.LocalDateTime;import java.util.Random;import org.springframework.mail.SimpleMailMessage;import org.springframework.mail.javamail.JavaMailSender;import org.springframework.security.core.Authentication;import org.springframework.security.core.context.SecurityContextHolder;import org.springframework.security.core.userdetails.UserDetails;import org.springframework.security.core.userdetails.UserDetailsService;import org.springframework.security.core.userdetails.UsernameNotFoundException;import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;import org.springframework.stereotype.Service;import org.springframework.transaction.annotation.Transactional;import com.app.ycommerce.dto.CustomUserDetails;import com.app.ycommerce.dto.MemberSignUpDTO;import com.app.ycommerce.dto.VerificationEmailDto;import com.app.ycommerce.entity.Member;import com.app.ycommerce.repository.MemberRepository;import com.app.ycommerce.repository.RedisRepository;@Service@Transactionalpublic class MemberService implements UserDetailsService {	private final MemberRepository memberRepository;	private final BCryptPasswordEncoder bCryptPasswordEncoder;	private final JavaMailSender mailSender;	private final RedisRepository redisRepository;	public MemberService(MemberRepository memberRepository, BCryptPasswordEncoder bCryptPasswordEncoder,		JavaMailSender emailSender, RedisRepository redisRepository) {		this.memberRepository = memberRepository;		this.bCryptPasswordEncoder = bCryptPasswordEncoder;		this.mailSender = emailSender;		this.redisRepository = redisRepository;	}	//회원 로그인 -이메일 중복 확인 후 저장	public Member signUp(MemberSignUpDTO memberSignUpDTO) {		String email = memberSignUpDTO.getEmail();		checkDuplication(email);		if ((redisRepository.verifyVerificationCode(memberSignUpDTO.getEmail(),			memberSignUpDTO.getVerificationCode()))) {			Member member = Member.builder()				.email(memberSignUpDTO.getEmail())				.password(bCryptPasswordEncoder.encode(memberSignUpDTO.getPassword()))				.name(memberSignUpDTO.getName())				.phone(memberSignUpDTO.getPhone())				.address(memberSignUpDTO.getAddress())				.role("ROLE_MEMBER")				.createdAt(LocalDate.from(LocalDateTime.now()))				.build();			return memberRepository.save(member);		}		//        ModelMapper modelMapper = new ModelMapper();		//        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);		//        Member member = modelMapper.map(memberSignUpDTO, Member.class);		throw new IllegalArgumentException("잘못된 인증 코드입니다.");	}	//회원 코드 전송	public void sendVerificationEmail(String email, String verificationCode) {		SimpleMailMessage mailMessage = new SimpleMailMessage();		mailMessage.setFrom("khsso102649@gmail.com");		mailMessage.setTo(email);		mailMessage.setSubject("회원가입 인증 코드");		mailMessage.setText(verificationCode);		mailSender.send(mailMessage);		redisRepository.saveVerificationCode(email, verificationCode);	}	//인증코드 랜덤 6자리 생성	public String generateVerificationCode() {		int min = 100000;		int max = 999999;		Random random = new Random();		int randomNumber = random.nextInt(max - min + 1) + min;		return String.valueOf(randomNumber);	}	//email 인증코드 저장 및 중복체크	public VerificationEmailDto verificationEmail(String email) {		checkDuplication(email);		String verificationCode = generateVerificationCode();		sendVerificationEmail(email, verificationCode);		VerificationEmailDto verificationEmailDto = VerificationEmailDto.builder()			.verificationCode(verificationCode)			.build();		return verificationEmailDto;	}	//이메일 중복검사	public void checkDuplication(String email) {		if (memberRepository.existsByEmail(email))			throw new IllegalArgumentException("이미 존재하는 이메일입니다.");	}	public Member getMember(String email) {		Member member = memberRepository.findByEmail(email)			.orElseThrow(() -> new IllegalArgumentException(""));		return member;	}	// //로그인	// public Member login(MemberRequest memberRequest) {	// 	Member member = memberRepository.findByEmail(memberRequest.getEmail());	//	// 	if (member == null) {	// 		throw new IllegalArgumentException("존재하지 않는 회원입니다.");	// 	}	//	// 	if (!bCryptPasswordEncoder.matches(memberRequest.getPassword(), member.getPassword())) {	// 		throw new IllegalArgumentException("회원 정보가 일치하지 않습니다.");	// 	}	//	// 	return member;	// }	@Override	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {		Member member = memberRepository.findByEmail(email)			.orElseThrow(() -> new UsernameNotFoundException("회원 정보가 없습니다."));		return new CustomUserDetails(member);	}	//로그인한 맴버	public Member getCurrentMember() {		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();		if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {			CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();			return memberRepository.findByEmail(userDetails.getUsername())				.orElseThrow(() -> new IllegalArgumentException(""));		}		throw new IllegalStateException("인증된 사용자 정보가 없습니다.");	}}

@@ -1,15 +1,12 @@
 package com.app.ycommerce.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,10 +24,17 @@ public class Cart {
 	@Column(name = "cart_id")
 	private Long id;
 
-	@OneToMany
-	private List<CartItem> cartItems = new ArrayList<>();
+	// @OneToMany
+	// private List<CartItem> cartItems = new ArrayList<>();
 
+	@ManyToOne
 	@JoinColumn(name = "member_id")
-	private Long memberId;
+	private Member member;
+
+	public static Cart createCart(Member meber) {
+		return Cart.builder()
+			.member(meber)
+			.build();
+	}
 
 }

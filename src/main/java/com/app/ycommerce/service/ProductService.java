@@ -35,13 +35,13 @@ public class ProductService {
 			.orElseThrow(() -> new IllegalArgumentException("준비되지 않은 상품입니다."));
 		Member member = memberService.getCurrentMember();
 
-		LikeItem existingLike = likeItemRepository.findByMemberIdAndProduct(member.getId(), product)
+		LikeItem existingLike = likeItemRepository.findByMemberAndProduct(member, product)
 			.orElse(null);
 
 		if (existingLike == null) {
 			LikeItem likeItem = LikeItem.builder()
 				.product(product)
-				.memberId(member.getId())
+				.member(member)
 				.build();
 
 			likeItemRepository.save(likeItem);
@@ -53,7 +53,7 @@ public class ProductService {
 	//유저가 좋아요한 목록
 	public List<LikeItem> getLikedProducts() {
 		Member member = memberService.getCurrentMember();
-		return likeItemRepository.findByMemberId(member.getId());
+		return likeItemRepository.findByMember(member);
 	}
 
 	//최근 상품순

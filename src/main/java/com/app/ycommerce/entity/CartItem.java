@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,8 +27,9 @@ public class CartItem {
 	@Column(name = "cart_item_id")
 	private Long id;
 
+	@ManyToOne
 	@JoinColumn(name = "cart_id")
-	private Long cartId;
+	private Cart cart;
 
 	@OneToOne
 	@JoinColumn(name = "product_id")
@@ -35,4 +37,15 @@ public class CartItem {
 
 	private int quantity;
 
+	public static CartItem createCartItem(Cart cart, Product product, int quantity) {
+		return CartItem.builder()
+			.cart(cart)
+			.product(product)
+			.quantity(quantity)
+			.build();
+	}
+
+	public void addQuantity(int quantity) {
+		this.quantity = this.quantity + quantity;
+	}
 }
