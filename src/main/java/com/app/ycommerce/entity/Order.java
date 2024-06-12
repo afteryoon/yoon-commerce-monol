@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -40,33 +42,49 @@ public class Order {
 
 	private LocalDateTime orderDate;
 	private int amount;
+	@Embedded
 	private Address deliveryAddress;
 
-	@OneToMany
-	private List<OrderItem> orderItems = new ArrayList<>();
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+	private final List<OrderItem> orderItems = new ArrayList<>();
 
 	@ManyToOne
 	@JoinColumn(name = "member_id")
 	private Member member;
 
-	public static Order createOrder(Member member, Address deliveryAddress) {
-		return Order.builder()
+	//연관관계 메서드
+	public void addOrderItem(OrderItem orderItem) {
+		orderItems.add(orderItem);
+		orderItem.setOrder(this);
+	}
+
+	//==생성메서드==//
+	public static Order createOrder(Member member, Address deliveryAddress, List<OrderItem> orderItems) {
+		Order order = Order.builder()
 			.member(member)
 			.orderStatus(OrderStatus.PLACED)
 			.orderDate(LocalDateTime.now())
 			.deliveryAddress(deliveryAddress)
 			.build();
-	}
 
-	public void addOrderItems(List<OrderItem> orderItems) {
-		int amount = 0;
 		for (OrderItem orderItem : orderItems) {
-			orderItem.setOrder(this);
-			this.orderItems.add(orderItem);
-			amount += orderItem.getProduct().getPrice();
+			order.addOrderItem(orderItem);
+			order.sumPrice(orderItem.getProduct().getPrice() * orderItem.getQuantity());
 		}
-		this.amount = amount;
+
+		return order;
 	}
 
+	public void sumPrice(int price) {
+		this.amount = amount + price;
+	}
+
+	//==출력 메서드==//
+	@Override
+	public String toString() {
+		return "Order{" + "id=" + id + ", orderStatus=" + orderStatus + ", orderDate=" + orderDate + ", amount="
+			+ amount + ", deliveryAddress=" + deliveryAddress + ", orderItems=" + orderItems + ", member=" + member
+			+ '}';
+	}
 }
 

@@ -31,6 +31,7 @@ public class Cart {
 	@JoinColumn(name = "member_id")
 	private Member member;
 
+	//int
 	public static Cart createCart(Member meber) {
 		return Cart.builder()
 			.member(meber)

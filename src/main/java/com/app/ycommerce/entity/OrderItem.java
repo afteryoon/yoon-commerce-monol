@@ -28,6 +28,7 @@ public class OrderItem {
 	private Long id;
 
 	private int quantity;
+	private int price;
 
 	@ManyToOne
 	@JoinColumn(name = "order_id")
@@ -37,12 +38,21 @@ public class OrderItem {
 	@JoinColumn(name = "product_id")
 	private Product product;
 
-	public static OrderItem createOrderItem(Order order, Product product, int quantity) {
+	public static OrderItem createOrderItem(Product product, int quantity, int price) {
 		return OrderItem.builder()
-			.order(order)
 			.product(product)
 			.quantity(quantity)
+			.price(price)
 			.build();
 	}
 
+	@Override
+	public String toString() {
+		return "OrderItem{" +
+			"id=" + id +
+			", quantity=" + quantity +
+			// ", order=" + order +
+			", product=" + product +
+			'}';
+	}
 }

@@ -1,17 +1,17 @@
 package com.app.ycommerce.request;
 
+import java.util.List;
+
 import com.app.ycommerce.entity.Address;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 @Builder
-public class OrderRequest {
+public class OrderProductsRequests {
 
-	private int cart;
-	private Address deliveryAddress;
-	//private PaymentDto payment;
+	private List<ProductAndCount> productAndCounts;
+	private Address address;
+
 }

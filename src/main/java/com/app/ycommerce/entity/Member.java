@@ -51,4 +51,18 @@ public class Member {
 	// @OneToOne(fetch = FetchType.LAZY)
 	// @JoinColumn(name = "cart_id")
 	// private Cart cart;
+
+	@Override
+	public String toString() {
+		return "Member{" +
+			"id=" + id +
+			", name='" + name + '\'' +
+			", password='" + password + '\'' +
+			", email='" + email + '\'' +
+			", phone='" + phone + '\'' +
+			", address=" + address +
+			", createdAt=" + createdAt +
+			", role='" + role + '\'' +
+			'}';
+	}
 }
